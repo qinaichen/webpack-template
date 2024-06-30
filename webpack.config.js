@@ -1,49 +1,36 @@
-const { resolve } = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const path = require("path");
+const htmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
-    entry: './src/index.js',
+    mode: "development",
+    devtool: "inline-source-map",
+    entry: "./src/index.js",
     output: {
-        filename: 'index.js',
-        path: resolve(__dirname, 'dist')
+        filename: '[name].bundle.js',
+        path: path.resolve(__dirname, "dist"),
+        clean: true,
     },
     module: {
-        rules: [{
-            test: /\.css$/,
-            use: [
-                MiniCssExtractPlugin.loader,
-                'css-loader']
-        }, {
-            test: /\.less$/,
-            use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader']
-        }, {
-            test: /\.(jpg|jpeg|png|gif)$/,
-            loader: 'url-loader',
-            options: {
-                limit: 8 * 1024,
-                esModule: false
+        rules: [
+            {
+                test: /\.css$/i,
+                use: ["style-loader", "css-loader"]
+            },
+            {
+                test: /\.(png|jpg|jpeg|gif)$/i,
+                type: "asset/resource",
+            },
+            {
+                test: /\.(woff|woff2|eot|tff|otf)$/i,
+                type: "asset/resource",
             }
-        }, {
-            test: /\.html$/,
-            loader: 'html-loader'
-        }, {
-            exclude: /\.(css|js|html|sass|less|jpg|jpeg|png|gif)$/,
-            loader: 'file-loader',
-            options: {
-                name: '[hash:10].[ext]'
-            }
-        }]
+        ]
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            template: './public/index.html'
-        }),
-        new MiniCssExtractPlugin()
+        new htmlWebpackPlugin({
+            template: path.resolve(__dirname, "./public/index.html"),
+        })
     ],
-    mode: 'development',
     devServer: {
-        contentBase: resolve(__dirname, 'build'),
-        compress: true,
-        port: 3000
+        port: 3000,
     }
 }
